@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathe Super App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #27ae60;
+        }
+        .error {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mathe Super App</h1>
+    <div class="container">
+        <h2>Wähle eine Übung:</h2>
+        <button onclick="startAddition()">Addition</button>
+        <button onclick="startSubtraction()">Subtraktion</button>
+        <button onclick="startMultiplication()">Multiplikation</button>
+        <button onclick="startDivision()">Division</button>
+        <button onclick="startGeometry()">Geometrie</button>
+    </div>
+
+    <div class="container" id="exercise-container" style="display: none;">
+        <h2 id="exercise-title"></h2>
+        <div id="exercise-content"></div>
+        <button onclick="goBack()">Zurück</button>
+    </div>
+
+    <script>
+        function goBack() {
+            document.getElementById("exercise-container").style.display = "none";
+            document.querySelector(".container").style.display = "block";
+        }
+
+        function startAddition() {
+            showExercise("Addition", "Gib zwei Zahlen ein, die addiert werden sollen:", (a, b) => a + b);
+        }
+
+        function startSubtraction() {
+            showExercise("Subtraktion", "Gib zwei Zahlen ein, die subtrahiert werden sollen:", (a, b) => a - b);
+        }
+
+        function startMultiplication() {
+            showExercise("Multiplikation", "Gib zwei Zahlen ein, die multipliziert werden sollen:", (a, b) => a * b);
+        }
+
+        function startDivision() {
+            showExercise("Division", "Gib zwei Zahlen ein, die dividiert werden sollen:", (a, b) => b !== 0 ? (a / b).toFixed(2) : "Fehler: Division durch 0");
+        }
+
+        function startGeometry() {
+            const container = document.getElementById("exercise-container");
+            const content = document.getElementById("exercise-content");
+            const title = document.getElementById("exercise-title");
+
+            title.innerText = "Geometrie";
+            content.innerHTML = `
+                <p>Wähle eine Geometrie-Berechnung:</p>
+                <button onclick="calculateRectangle()">Rechteck</button>
+                <button onclick="calculateTriangle()">Dreieck</button>
+                <button onclick="calculateCircle()">Kreis</button>
+            `;
+            document.querySelector(".container").style.display = "none";
+            container.style.display = "block";
+        }
+
+        function calculateRectangle() {
+            showExercise("Rechteck", "Gib die Länge und Breite ein, um die Fläche zu berechnen:", (l, b) => l * b);
+        }
+
+        function calculateTriangle() {
+            showExercise("Dreieck", "Gib die Grundlinie und Höhe ein, um die Fläche zu berechnen:", (g, h) => (g * h) / 2);
+        }
+
+        function calculateCircle() {
+            showExercise("Kreis", "Gib den Radius ein, um die Fläche zu berechnen:", (r) => (Math.PI * r * r).toFixed(2), 1);
+        }
+
+        function showExercise(title, description, operation, numInputs = 2) {
+            const container = document.getElementById("exercise-container");
+            const content = document.getElementById("exercise-content");
+            const titleElement = document.getElementById("exercise-title");
+
+            titleElement.innerText = title;
+            let inputs = "";
+            for (let i = 0; i < numInputs; i++) {
+                inputs += `<input type="number" id="input${i}" placeholder="Zahl ${i + 1}" required>`;
+            }
+            content.innerHTML = `
+                <p>${description}</p>
+                ${inputs}
+                <button onclick="calculateResult(${operation})">Berechnen</button>
+                <div id="result" class="result"></div>
+            `;
+            document.querySelector(".container").style.display = "none";
+            container.style.display = "block";
+        }
+
+        function calculateResult(operation) {
+            const inputs = document.querySelectorAll("#exercise-content input");
+            const values = Array.from(inputs).map(input => parseFloat(input.value));
+            const resultElement = document.getElementById("result");
+
+            if (values.some(isNaN)) {
+                resultElement.innerHTML = `<p class="error">Bitte gib gültige Zahlen ein!</p>`;
+                return;
+            }
+
+            const result = operation(...values);
+            resultElement.innerHTML = `<p>Ergebnis: ${result}</p>`;
+        }
+    </script>
+</body>
+</html>
